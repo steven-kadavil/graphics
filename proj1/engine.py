@@ -80,11 +80,6 @@ class Engine:
         keys = pg.key.get_pressed()
         mods = pg.key.get_mods()
 
-        # Debug: Print loaded controls (only once)
-        if not hasattr(self, '_debug_printed'):
-            print("Loaded controls:", self.controls)
-            self._debug_printed = True
-
         for key_name, actions in self.controls.items():
             key = getattr(pg, f'K_{key_name.lower()}')
             if keys[key]:
@@ -96,16 +91,13 @@ class Engine:
                     action = actions['no_modifier']
 
                 axis = actions['axis']
-                print(f"Key {key_name} pressed: {action} on {axis} axis")  # Debug print
                 self.apply_transformation(action, axis)
 
         # Handle P key for uniform scaling
         if keys[pg.K_p]:
             if mods & pg.KMOD_SHIFT:
-                print("P+Shift: Scaling up")  # Debug print
                 self.cubeScale += glm.vec3(SCALE_STEP * self.dt)
             else:
-                print("P: Scaling down")  # Debug print
                 self.cubeScale -= glm.vec3(SCALE_STEP * self.dt)
                 self.cubeScale = glm.vec3(max(0.1, self.cubeScale.x), 
                                          max(0.1, self.cubeScale.y), 
@@ -113,7 +105,6 @@ class Engine:
 
         # Handle R key for reset
         if keys[pg.K_r]:
-            print("R: Resetting transformations")  # Debug print
             self.reset_transformations()
             
     def reset_transformations(self):
@@ -126,8 +117,6 @@ class Engine:
     def apply_transformation(self, action, axis):
         i = 'xyz'.index(axis)  # x=0, y=1, z=2
         
-        print(f"Applying {action} to {axis} axis (index {i})")  # Debug print
-
         if action == 'rotate_pos':
             self.cubeRotRate[i] += ROTATION_STEP * self.dt
         elif action == 'rotate_neg':
@@ -143,7 +132,7 @@ class Engine:
             self.cubeScale[i] = max(0.1, self.cubeScale[i])
         
         # Debug: Print current transformation values
-        print(f"Current values - Rot: {self.cubeRotValue}, Scale: {self.cubeScale}, Trans: {self.cubeTranslation}")
+        # print(f"Current values - Rot: {self.cubeRotValue}, Scale: {self.cubeScale}, Trans: {self.cubeTranslation}")
 
 
     def process_input(self):
